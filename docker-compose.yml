@@ -1,0 +1,12 @@
+version: "3.5"
+services:
+
+  app-financeiro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-financeiro
+    restart: always
+    mem_limit: 150m
+    ports:
+      - 85:8000
