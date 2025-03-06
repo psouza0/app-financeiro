@@ -28,4 +28,7 @@ docker-compose up -d
 Usuário: user
 Senha: 1234
 
-# Author: Paulo Geraldo
+## Contato com o Author
+Caso tenha dúvidas ou sugestões, entre em contato:
+- **Email**: [paulogeraldols@gmail.com]
+- **GitHub**: [psouza0]
