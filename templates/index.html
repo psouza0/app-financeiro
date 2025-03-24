@@ -1,83 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Financeiro</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
             background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
+            width: 100%;
+            max-width: 900px;
+            background: #fff;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .column {
-            flex: 50%;
-            padding: 0 20px;
+            flex: 1;
+            min-width: 300px;
         }
 
-        h1,
-        h2,
-        h3 {
-            color: #333;
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
         }
 
         form {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
             margin-bottom: 20px;
         }
 
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
         input[type="text"],
-        input[type="submit"] {
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+        input[type="submit"],
+        datalist {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
         }
 
         input[type="submit"] {
-            background-color: #4CAF50;
+            background: #27ae60;
             color: white;
             border: none;
             cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
         }
 
         input[type="submit"]:hover {
-            background-color: #4CAF50;
+            background: #219150;
+        }
+
+        .logout-btn input {
+            background: #e74c3c;
+        }
+
+        .logout-btn input:hover {
+            background: #c0392b;
         }
 
         ul {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
+            margin-top: 10px;
         }
 
         li {
-            margin-bottom: 5px;
+            background: #ecf0f1;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .paid {
-            color: #666;
+            color: #7f8c8d;
             text-decoration: line-through;
         }
 
-        .flash-messages {
-            margin-top: 20px;
+        .actions a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-left: 5px;
+            color: white;
         }
 
-        .flash-messages li {
-            color: red;
+        .pay { background: #3498db; }
+        .edit { background: #f39c12; }
+        .delete { background: #e74c3c; }
+
+        .actions a:hover {
+            opacity: 0.8;
+        }
+
+        .flash-messages {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -88,61 +145,58 @@
             <h1>App Financeiro</h1>
             <h2>Renda: R$ {{ renda }}</h2>
             <h2>Saldo Restante: R$ {{ saldo_restante }}</h2>
+
             <form action="/configurar_saldo" method="POST">
                 <label for="renda">Informe sua Renda Total:</label>
-                <input type="text" id="renda" name="renda"><br>
+                <input type="text" id="renda" name="renda" placeholder="Ex: 5000">
                 <input type="submit" value="Configurar">
             </form>
+
             <h2>Contas a Pagar</h2>
             <ul>
                 {% for conta in contas %}
-                <li{% if conta.paga %} class="paid" {% endif %}>
-                    {{ conta.descricao }} - R$ {{ conta.valor }} | {{ conta.categoria }}
-                    <a href="/pagar_conta/{{ loop.index0 }}">Pagar</a>
-                    <a href="/editar_conta/{{ loop.index0 }}">Editar</a>
-                    <a href="/excluir_conta/{{ loop.index0 }}">Excluir</a>
-                    </li>
-                    {% endfor %}
+                <li class="{% if conta.paga %}paid{% endif %}">
+                    {{ conta.descricao }} - R$ {{ conta.valor }}
+                    <div class="actions">
+                        <a href="/pagar_conta/{{ loop.index0 }}" class="pay">Pagar</a>
+                        <a href="/editar_conta/{{ loop.index0 }}" class="edit">Editar</a>
+                        <a href="/excluir_conta/{{ loop.index0 }}" class="delete">Excluir</a>
+                    </div>
+                </li>
+                {% endfor %}
             </ul>
+
             <h2>Adicionar Conta</h2>
             <form action="/adicionar_conta" method="POST">
                 <label for="descricao">Descrição:</label>
-                <input type="text" id="descricao" name="descricao"><br>
+                <input type="text" id="descricao" name="descricao" placeholder="Ex: Conta de luz">
+                
                 <label for="valor">Valor:</label>
-                <input type="text" id="valor" name="valor"><br>
-                <label for="categoria">Categoria:</label>
-                <input list="categorias" name="categoria" id="categoria">
-                <datalist id="categorias">
-                  <option value="Moradia">
-                  <option value="Comida">
-                  <option value="Lazer">
-                  <option value="Transporte">
-                  <option value="Viagens">
-                  <option value="Outras categorias">
-                  </datalist><br><br>
+                <input type="text" id="valor" name="valor" placeholder="Ex: 250.00">
                 <input type="submit" value="Adicionar">
             </form>
+
             <form action="/logout" method="GET" class="logout-btn">
                 <input type="submit" value="Logout">
             </form>
         </div>
+
         <div class="column">
             <h2>Contas Pagas</h2>
             <ul>
                 {% for conta in contas_pagas %}
-                <li class="paid">{{ conta.descricao }} - R$ {{ conta.valor }} | Categoria: {{ conta.categoria }}</li>
+                <li class="paid">{{ conta.descricao }} - R$ {{ conta.valor }}}</li>
                 {% endfor %}
             </ul>
-            <p>Total Pago: R$ {{ total_contas_pagas }}</p>
+            <p><strong>Total Pago:</strong> R$ {{ total_contas_pagas }}</p>
 
-            <!-- Exibir mensagens de erro -->
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <ul class="flash-messages">
+            <div class="flash-messages">
                 {% for message in messages %}
-                <li>{{ message }}</li>
+                <p>{{ message }}</p>
                 {% endfor %}
-            </ul>
+            </div>
             {% endif %}
             {% endwith %}
         </div>
